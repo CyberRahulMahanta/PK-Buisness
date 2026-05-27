@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom'
+import bannerOne from '../../assets/Banner1.jpeg'
+import bannerTwo from '../../assets/Banner2.jpeg'
+import bannerThree from '../../assets/Banner3.jpeg'
 import homeHeroProfile from '../../assets/home-hero-profile.jpg'
 import { serviceCatalog, testimonials } from '../../data/siteData.js'
+
+const homeBanners = [
+  { src: bannerOne, alt: 'PK Business service banner one' },
+  { src: bannerTwo, alt: 'PK Business service banner two' },
+  { src: bannerThree, alt: 'PK Business service banner three' },
+]
 
 function Home() {
   return (
@@ -8,47 +17,45 @@ function Home() {
       <section className="hero-section home-hero-section container">
         <div className="hero-copy home-hero-copy">
           <span className="eyebrow">Professional business support</span>
-          <h1>Tax, GST, and registration guidance presented with clarity, speed, and trust.</h1>
+          <h1>Welcome to P.K Business Solution</h1>
+          <img
+            alt="PK Business professional reviewing business documents"
+            className="home-hero-inline-image"
+            src={homeHeroProfile}
+          />
           <p>
             We help professionals, families, and growing businesses handle tax filing,
             registrations, and ongoing compliance with a more organized and dependable process.
           </p>
-          <div className="hero-actions">
-            <Link className="button button-primary" to="/contact">
-              Book Consultation
-            </Link>
-            <Link className="button button-ghost" to="/services">
-              Explore Services
-            </Link>
-          </div>
-          <div className="hero-service-strip">
-            <span>ITR Filing</span>
-            <span>GST Registration</span>
-            <span>Udyam Support</span>
-          </div>
-          <div className="hero-stats">
-            <div>
-              <strong>1,200+</strong>
-              <span>Returns filed</span>
-            </div>
-            <div>
-              <strong>98%</strong>
-              <span>Deadline adherence</span>
-            </div>
-            <div>
-              <strong>12 Years</strong>
-              <span>Practice experience</span>
-            </div>
-          </div>
         </div>
 
-        <div className="home-hero-visual">
-          <div className="home-hero-figure">
-            <img alt="PK Business professional reviewing business documents" src={homeHeroProfile} />
+        <div className="home-hero-media">
+          <div className="home-banner-showcase" aria-label="PK Business featured services">
+            {homeBanners.map((banner, index) => (
+              <img
+                alt={banner.alt}
+                className="home-banner-slide"
+                key={banner.src}
+                src={banner.src}
+                style={{ '--banner-index': index }}
+              />
+            ))}
           </div>
-          <div className="home-hero-caption">
-            <strong>Purnia & Beyond</strong>
-            <span>Reliable assistance for filings, registrations, and document-ready compliance work.</span>
+
+          <div className="home-hero-bottom">
+            <div className="hero-actions">
+              <Link className="button button-primary" to="/contact">
+                Book Consultation
+              </Link>
+              <Link className="button button-ghost" to="/services">
+                Explore Services
+              </Link>
+            </div>
+            <div className="hero-service-strip">
+              <span>ITR Filing</span>
+              <span>GST Registration</span>
+              <span>Udyam Support</span>
+            </div>
           </div>
         </div>
       </section>
@@ -74,6 +81,9 @@ function Home() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              <Link className="button button-primary button-compact service-book-button" to="/login">
+                Book Now
+              </Link>
             </article>
           ))}
         </div>

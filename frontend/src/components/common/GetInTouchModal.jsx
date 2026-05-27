@@ -21,7 +21,9 @@ function GetInTouchModal() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (loading || token || user || dismissed) {
+    const pageHasContactAction = location.pathname === '/' || location.pathname === '/contact'
+
+    if (loading || token || user || dismissed || pageHasContactAction) {
       setVisible(false)
       return undefined
     }
@@ -31,7 +33,7 @@ function GetInTouchModal() {
     }, 10000)
 
     return () => window.clearTimeout(timer)
-  }, [dismissed, loading, token, user])
+  }, [dismissed, loading, location.pathname, token, user])
 
   useEffect(() => {
     setStatus({ type: '', message: '' })

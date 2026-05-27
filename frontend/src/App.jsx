@@ -29,6 +29,7 @@ import AdminPayments from './pages/admin/Payments.jsx'
 import AdminPreparedDocuments from './pages/admin/PreparedDocuments.jsx'
 import AdminClientWorkspace from './pages/admin/ClientWorkspace.jsx'
 import AdminContactMessages from './pages/admin/ContactMessages.jsx'
+import AdminBlogs from './pages/admin/Blogs.jsx'
 
 function App() {
   return (
@@ -90,6 +91,7 @@ function App() {
           <Route path="services" element={<AdminServices />} />
           <Route path="appointments" element={<AdminAppointments />} />
           <Route path="payments" element={<AdminPayments />} />
+          <Route path="blogs" element={<AdminBlogs />} />
           <Route path="prepared-documents" element={<AdminPreparedDocuments />} />
           <Route path="profile" element={<Profile />} />
         </Route>

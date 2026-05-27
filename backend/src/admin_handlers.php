@@ -926,6 +926,146 @@ function handle_admin_get_service_catalog(PDO $db): void
     json_response(['services' => array_map('serialize_service_catalog_record', $services)]);
 }
 
+function blog_slug_from_title(string $title): string
+{
+    $slug = strtolower(trim((string) preg_replace('/[^a-zA-Z0-9]+/', '-', $title), '-'));
+    return $slug !== '' ? $slug : 'blog-post';
+}
+
+function unique_blog_slug(PDO $db, string $title, ?string $ignoreId = null): string
+{
+    $baseSlug = blog_slug_from_title($title);
+    $slug = $baseSlug;
+    $counter = 2;
+
+    while (true) {
+        $params = [':slug' => $slug];
+        $sql = 'SELECT id FROM blogs WHERE slug = :slug';
+
+        if ($ignoreId !== null) {
+            $sql .= ' AND id <> :id';
+            $params[':id'] = $ignoreId;
+        }
+
+        $sql .= ' LIMIT 1';
+
+        if (fetch_one($db, $sql, $params) === null) {
+            return $slug;
+        }
+
+        $slug = $baseSlug . '-' . $counter;
+        $counter += 1;
+    }
+}
+
+function blog_published_at_from_input(mixed $value, ?string $fallback = null): string
+{
+    $input = safe_trim($value ?? '');
+
+    if ($input === '') {
+        return $fallback ?? now_db();
+    }
+
+    try {
+        return (new DateTimeImmutable($input))->format('Y-m-d H:i:s');
+    } catch (Throwable) {
+        throw new AppError(400, 'Published date is invalid');
+    }
+}
+
+function handle_admin_get_blogs(PDO $db): void
+{
+    require_admin($db);
+    $blogs = fetch_all($db, 'SELECT * FROM blogs ORDER BY published_at DESC, created_at DESC');
+    json_response(['blogs' => array_map('serialize_blog_record', $blogs)]);
+}
+
+function handle_admin_create_blog(PDO $db): void
+{
+    require_admin($db);
+    $data = request_data();
+    $title = safe_trim($data['title'] ?? '');
+    $description = safe_trim($data['description'] ?? '');
+    $content = safe_trim($data['content'] ?? '');
+    $category = safe_trim($data['category'] ?? 'General', 'General');
+
+    if ($title === '' || $description === '' || $content === '') {
+        throw new AppError(400, 'Title, description, and content are required');
+    }
+
+    $now = now_db();
+    $blogId = uuid_v4();
+
+    insert_row($db, 'blogs', [
+        'id' => $blogId,
+        'title' => $title,
+        'slug' => unique_blog_slug($db, $title),
+        'description' => $description,
+        'content' => $content,
+        'category' => $category,
+        'published_at' => blog_published_at_from_input($data['publishedAt'] ?? null, $now),
+        'created_at' => $now,
+        'updated_at' => $now,
+    ]);
+
+    $blog = fetch_one($db, 'SELECT * FROM blogs WHERE id = :id LIMIT 1', [':id' => $blogId]);
+
+    json_response([
+        'message' => 'Blog added successfully',
+        'blog' => serialize_blog_record((array) $blog),
+    ], 201);
+}
+
+function handle_admin_update_blog(PDO $db, string $blogId): void
+{
+    require_admin($db);
+    $blog = fetch_one($db, 'SELECT * FROM blogs WHERE id = :id LIMIT 1', [':id' => $blogId]);
+
+    if ($blog === null) {
+        throw new AppError(404, 'Blog post not found');
+    }
+
+    $data = request_data();
+    $title = safe_trim($data['title'] ?? $blog['title'], (string) $blog['title']);
+    $description = safe_trim($data['description'] ?? $blog['description'], (string) $blog['description']);
+    $content = safe_trim($data['content'] ?? $blog['content'], (string) $blog['content']);
+    $category = safe_trim($data['category'] ?? $blog['category'], (string) ($blog['category'] ?? 'General'));
+
+    if ($title === '' || $description === '' || $content === '') {
+        throw new AppError(400, 'Title, description, and content are required');
+    }
+
+    update_row($db, 'blogs', [
+        'title' => $title,
+        'slug' => unique_blog_slug($db, $title, $blogId),
+        'description' => $description,
+        'content' => $content,
+        'category' => $category,
+        'published_at' => blog_published_at_from_input($data['publishedAt'] ?? null, (string) $blog['published_at']),
+        'updated_at' => now_db(),
+    ], 'id = :id', [':id' => $blogId]);
+
+    $updated = fetch_one($db, 'SELECT * FROM blogs WHERE id = :id LIMIT 1', [':id' => $blogId]);
+
+    json_response([
+        'message' => 'Blog updated successfully',
+        'blog' => serialize_blog_record((array) $updated),
+    ]);
+}
+
+function handle_admin_delete_blog(PDO $db, string $blogId): void
+{
+    require_admin($db);
+    $blog = fetch_one($db, 'SELECT * FROM blogs WHERE id = :id LIMIT 1', [':id' => $blogId]);
+
+    if ($blog === null) {
+        throw new AppError(404, 'Blog post not found');
+    }
+
+    execute_statement($db, 'DELETE FROM blogs WHERE id = :id', [':id' => $blogId]);
+    json_response(['message' => 'Blog deleted successfully']);
+}
+
 function handle_admin_create_service_catalog_item(PDO $db): void
 {
     require_admin($db);

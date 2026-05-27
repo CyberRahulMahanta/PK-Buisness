@@ -21,10 +21,10 @@ export const siteSocials = {
 
 export const publicNavLinks = [
   { label: 'Home', to: '/' },
-  { label: 'About', to: '/about' },
   { label: 'Services', to: '/services' },
   { label: 'Blog', to: '/blog' },
   { label: 'Contact', to: '/contact' },
+  { label: 'About', to: '/about' },
 ]
 
 export const serviceCatalog = [
@@ -237,5 +237,6 @@ export const adminLinks = [
   { label: 'Payments', to: '/admin/payments', icon: 'payment' },
   { label: 'Profile', to: '/admin/profile', icon: 'profile' },
   { label: 'Services', to: '/admin/services', icon: 'services' },
+  { label: 'Blogs', to: '/admin/blogs', icon: 'document' },
   { label: 'prepared Docs', to: '/admin/prepared-documents', icon: 'document' },
 ]

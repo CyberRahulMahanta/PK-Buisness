@@ -173,6 +173,26 @@ try {
         return;
     }
 
+    if ($method === 'GET' && $path === '/api/admin/blogs') {
+        handle_admin_get_blogs($db);
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/api/admin/blogs') {
+        handle_admin_create_blog($db);
+        return;
+    }
+
+    if ($method === 'PATCH' && ($params = route_match($path, '/api/admin/blogs/(?P<id>[^/]+)'))) {
+        handle_admin_update_blog($db, $params['id']);
+        return;
+    }
+
+    if ($method === 'DELETE' && ($params = route_match($path, '/api/admin/blogs/(?P<id>[^/]+)'))) {
+        handle_admin_delete_blog($db, $params['id']);
+        return;
+    }
+
     if ($method === 'GET' && $path === '/api/admin/users') {
         handle_admin_get_users($db);
         return;

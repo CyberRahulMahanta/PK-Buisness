@@ -88,6 +88,12 @@ function Contact() {
             <a className="text-link" href={`mailto:${siteContact.email}`}>
               {siteContact.email}
             </a>
+            <a className="text-link" href="tel:+916299484291">
+              +91 62994 84291
+            </a>
+            <a className="text-link" href="tel:+917280873845">
+              +91 72808 73845
+            </a>
             <a className="text-link" href={siteContact.mapLink} rel="noreferrer" target="_blank">
               Open in Google Maps
             </a>

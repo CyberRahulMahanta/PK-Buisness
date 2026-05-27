@@ -70,7 +70,18 @@ function Footer() {
           <div className="footer-links">
             <span>{siteContact.address}</span>
             <span>{siteContact.officeHours}</span>
-            <a href={`mailto:${siteContact.email}`}>{siteContact.email}</a>
+
+            <a href={`mailto:${siteContact.email}`}>
+              {siteContact.email}
+            </a>
+
+            <a href="tel:+916299484291">
+              +91 62994 84291
+            </a>
+
+            <a href="tel:+917280873845">
+              +91 72808 73845
+            </a>
           </div>
 
           <div className="footer-socials" aria-label="Social links">
