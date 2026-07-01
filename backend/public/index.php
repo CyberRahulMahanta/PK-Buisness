@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'bootstrap.php';
@@ -25,6 +26,11 @@ try {
 
     if ($method === 'POST' && $path === '/api/auth/register') {
         handle_register($db);
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/api/whatsapp/send') {
+        require_once dirname(__DIR__) . '/whatsapp_message_api/welcome_message.php';
         return;
     }
 

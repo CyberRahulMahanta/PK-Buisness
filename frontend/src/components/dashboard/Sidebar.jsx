@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { adminLinks, dashboardLinks, siteBrand } from '../../data/siteData.js'
 import AdminIcon from '../admin/AdminIcon.jsx'
+import logoImg from '../../assets/logo.png' 
 
 function Sidebar({ role = 'user' }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -24,9 +25,8 @@ function Sidebar({ role = 'user' }) {
   return (
     <aside className={`sidebar ${role === 'admin' ? 'admin-sidebar' : ''}`}>
       <div className="sidebar-brand">
-        <span className="brand-mark">{siteBrand.shortName}</span>
+        <img src={logoImg} alt="PK Business Solution logo" className="brand-logo" />
         <div>
-          <strong>{siteBrand.name}</strong>
           <small>{role === 'admin' ? 'Client Portal Admin' : 'Client Portal'}</small>
           {role === 'admin' ? <span className="role-chip admin sidebar-role-chip">ADMIN</span> : user?.name ? <small>{user.name}</small> : null}
         </div>

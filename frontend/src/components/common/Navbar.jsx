@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { publicNavLinks, siteBrand } from '../../data/siteData.js'
+import logoImg from '../../assets/logo.png' 
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -69,11 +70,11 @@ function Navbar() {
     <header className="navbar-wrap">
       <nav className="navbar" ref={navRef}>
         <Link className="brand" onClick={closeMenu} to="/">
-          <span className="brand-mark">{siteBrand.shortName}</span>
-          <span>
-            <strong>{siteBrand.name}</strong>
-            <small>{siteBrand.tagline}</small>
-          </span>
+          <img
+            src={logoImg}
+            alt="PK Business Solution logo"
+            className="brand-logo"
+          />
         </Link>
 
         <button
@@ -123,6 +124,9 @@ function Navbar() {
               </>
             ) : (
               <>
+                <Link className="button button-ghost" onClick={closeMenu} to="/register">
+                  Register
+                </Link>
                 <Link className="button button-login" onClick={closeMenu} to="/login">
                   Login
                 </Link>

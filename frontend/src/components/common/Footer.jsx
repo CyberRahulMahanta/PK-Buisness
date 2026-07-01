@@ -62,6 +62,9 @@ function Footer() {
             <Link to="/blog">Blog</Link>
             <Link to="/contact">Contact</Link>
             <Link to="/login">Client Login</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
+            <Link to="/refund-policy">Refund Policy</Link>
           </div>
         </div>
 

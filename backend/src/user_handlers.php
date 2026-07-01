@@ -50,16 +50,28 @@ function handle_register(PDO $db): void
 function handle_login(PDO $db): void
 {
     $data = request_data();
-    $email = strtolower(safe_trim($data['email'] ?? ''));
+    $identifier = safe_trim($data['identifier'] ?? $data['email'] ?? '');
     $password = safe_trim($data['password'] ?? '');
-    $user = fetch_one($db, 'SELECT * FROM users WHERE email = :email LIMIT 1', [':email' => $email]);
+
+    if ($identifier === '' || $password === '') {
+        throw new AppError(400, 'Please provide your email or phone number and password');
+    }
+
+    // Determine if the identifier looks like a phone number or an email
+    $isPhone = preg_match('/^[0-9+\-\s]{7,15}$/', $identifier);
+
+    if ($isPhone) {
+        $user = fetch_one($db, 'SELECT * FROM users WHERE phone = :identifier LIMIT 1', [':identifier' => $identifier]);
+    } else {
+        $user = fetch_one($db, 'SELECT * FROM users WHERE email = :identifier LIMIT 1', [':identifier' => strtolower($identifier)]);
+    }
 
     if ($user !== null && (int) $user['is_blocked'] === 1) {
         throw new AppError(403, 'This account has been blocked. Please contact the admin.');
     }
 
     if ($user === null || !password_verify($password, $user['password_hash'])) {
-        throw new AppError(401, 'Invalid email or password');
+        throw new AppError(401, 'Invalid email/phone or password');
     }
 
     json_response([
@@ -518,6 +530,10 @@ function handle_create_appointment(PDO $db): void
     ]);
 
     $appointment = fetch_one($db, 'SELECT * FROM appointments WHERE id = :id LIMIT 1', [':id' => $appointmentId]);
+
+    if ($appointment !== null) {
+        send_appointment_whatsapp_message($db, (array) $appointment, $user);
+    }
 
     json_response([
         'message' => 'Appointment booked successfully',
@@ -1022,6 +1038,10 @@ function handle_verify_payment(PDO $db): void
 
     $freshPayment = fetch_one($db, 'SELECT * FROM payments WHERE id = :id LIMIT 1', [':id' => $paymentRecordId]);
 
+    if ($freshPayment !== null) {
+        send_payment_whatsapp_message($db, (array) $freshPayment, $user);
+    }
+
     json_response([
         'message' => 'Payment verified successfully',
         'payment' => serialize_payment_record((array) $freshPayment),
@@ -1110,6 +1130,13 @@ function handle_razorpay_webhook(PDO $db): void
             'link' => '/dashboard/payments',
             'actionLabel' => 'Open payments',
         ]);
+
+        $freshPayment = fetch_one($db, 'SELECT * FROM payments WHERE id = :id LIMIT 1', [':id' => $payment['id']]);
+        $paymentUser = fetch_one($db, 'SELECT * FROM users WHERE id = :id LIMIT 1', [':id' => $payment['user_id']]);
+
+        if ($freshPayment !== null && $paymentUser !== null) {
+            send_payment_whatsapp_message($db, (array) $freshPayment, (array) $paymentUser);
+        }
     }
 
     if ($eventType === 'payment.failed' || $razorpayStatus === 'failed') {

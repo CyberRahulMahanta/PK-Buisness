@@ -12,7 +12,7 @@ function WhatsAppButton() {
             fill="currentColor"
           />
         </svg>
-        Call Now
+        <span>Call Now</span>
       </a>
       <a
         aria-label="Chat on WhatsApp"
@@ -27,7 +27,7 @@ function WhatsAppButton() {
             fill="currentColor"
           />
         </svg>
-        WhatsApp
+        <span>WhatsApp</span>
       </a>
     </div>
   )

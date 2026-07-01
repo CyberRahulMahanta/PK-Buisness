@@ -3,15 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "client": "vite",
-    "server": "php -S localhost:5000 -t ..\\backend\\public ..\\backend\\router.php",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "php -S localhost:5000 -t ..\\backend\\public ..\\backend\\router.php"
-  },
+"scripts": {
+  "client": "vite --host",
+  "server": "php -S localhost:5000 -t ..\\backend\\public ..\\backend\\router.php",
+  "dev": "concurrently \"npm run server\" \"npm run client\"",
+  "build": "vite build",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "start": "php -S localhost:5000 -t ..\\backend\\public ..\\backend\\router.php"
+},
   "dependencies": {
     "axios": "^1.13.1",
     "concurrently": "^9.2.1",

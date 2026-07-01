@@ -25,7 +25,7 @@ function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ identifier: '', password: '' })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -75,8 +75,15 @@ function Login() {
           </div>
 
           <label>
-            Email
-            <input name="email" onChange={handleChange} required type="email" value={form.email} />
+            Email or Phone Number
+            <input
+              autoComplete="username"
+              name="identifier"
+              onChange={handleChange}
+              required
+              type="text"
+              value={form.identifier}
+            />
           </label>
 
           <label>
@@ -97,7 +104,7 @@ function Login() {
           </button>
 
           <p className="auth-meta">
-            Need an account? <Link to="/register">Create one here</Link>
+            Need an account? <Link to="/register"> Create one here  <strong style={{ color: 'blue', fontSize: '1.2em', textDecoration: 'underline' }}> Sign Up</strong></Link>
           </p>
         </form>
 

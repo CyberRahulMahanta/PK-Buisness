@@ -1299,6 +1299,10 @@ function handle_admin_assign_service(PDO $db): void
         [':id' => $serviceId],
     );
 
+    if ($status === 'completed' && $service !== null) {
+        send_service_completion_whatsapp_message($db, (array) $service, $user);
+    }
+
     json_response([
         'message' => 'Service assigned successfully',
         'service' => serialize_service_record((array) $service),
@@ -1351,6 +1355,14 @@ function handle_admin_update_service(PDO $db, string $serviceId): void
         ),
         [':id' => $serviceId],
     );
+
+    if ($status === 'completed' && $updated !== null) {
+        $serviceUser = extract_prefixed_row((array) $updated, 'user__');
+
+        if ($serviceUser !== null) {
+            send_service_completion_whatsapp_message($db, (array) $updated, $serviceUser);
+        }
+    }
 
     json_response([
         'message' => 'Service updated successfully',
@@ -1415,6 +1427,10 @@ function handle_admin_create_appointment(PDO $db): void
     ]);
 
     $appointment = fetch_one($db, 'SELECT * FROM appointments WHERE id = :id LIMIT 1', [':id' => $appointmentId]);
+
+    if ($appointment !== null) {
+        send_appointment_whatsapp_message($db, (array) $appointment, $user);
+    }
 
     json_response([
         'message' => 'Appointment created successfully',
@@ -1722,6 +1738,14 @@ function handle_admin_update_payment(PDO $db, string $paymentId): void
         ),
         [':id' => $paymentId],
     );
+
+    if ($verificationStatus === 'verified' && $updated !== null) {
+        $paymentUser = extract_prefixed_row((array) $updated, 'user__');
+
+        if ($paymentUser !== null) {
+            send_payment_whatsapp_message($db, (array) $updated, $paymentUser);
+        }
+    }
 
     json_response([
         'message' => 'Payment updated successfully',

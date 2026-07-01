@@ -14,26 +14,31 @@ const initialForm = {
 function GetInTouchModal() {
   const { loading, user, token } = useAuth()
   const location = useLocation()
+
   const [visible, setVisible] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    const pageHasContactAction = location.pathname === '/' || location.pathname === '/contact'
+  // ✅ BLOCKED PAGES
+  const blockedPages = ['/contact', '/login', '/register']
+  const isBlockedPage = blockedPages.includes(location.pathname)
 
-    if (loading || token || user || dismissed || pageHasContactAction) {
+  useEffect(() => {
+    // ❌ Do not show modal in these cases
+    if (loading || token || user || dismissed || isBlockedPage) {
       setVisible(false)
-      return undefined
+      return
     }
 
+    // ⏱️ show after 10 seconds
     const timer = window.setTimeout(() => {
       setVisible(true)
     }, 10000)
 
     return () => window.clearTimeout(timer)
-  }, [dismissed, loading, location.pathname, token, user])
+  }, [dismissed, loading, location.pathname, token, user, isBlockedPage])
 
   useEffect(() => {
     setStatus({ type: '', message: '' })
@@ -62,8 +67,10 @@ function GetInTouchModal() {
         source: 'popup',
         pageUrl: `${window.location.pathname}${window.location.search}`,
       })
+
       setForm(initialForm)
       setStatus({ type: 'success', message: 'Thank you. We will contact you soon.' })
+
       window.setTimeout(closeModal, 1200)
     } catch (error) {
       setStatus({ type: 'error', message: extractApiError(error) })
@@ -72,20 +79,30 @@ function GetInTouchModal() {
     }
   }
 
-  if (!visible) {
-    return null
-  }
+  if (!visible) return null
 
   return (
     <div className="get-in-touch-backdrop" role="presentation">
-      <section aria-labelledby="get-in-touch-title" aria-modal="true" className="get-in-touch-modal" role="dialog">
-        <button aria-label="Close get in touch form" className="modal-icon-button" onClick={closeModal} type="button">
+      <section
+        aria-labelledby="get-in-touch-title"
+        aria-modal="true"
+        className="get-in-touch-modal"
+        role="dialog"
+      >
+        <button
+          aria-label="Close get in touch form"
+          className="modal-icon-button"
+          onClick={closeModal}
+          type="button"
+        >
           <AdminIcon name="close" size={18} />
         </button>
 
         <div className="get-in-touch-head">
           <span className="eyebrow">Get in touch</span>
-          <h2 id="get-in-touch-title">Need help with tax, GST, or business paperwork?</h2>
+          <h2 id="get-in-touch-title">
+            Need help with tax, GST, or business paperwork?
+          </h2>
           <p>Share your details and the PK Business team will call you back.</p>
         </div>
 
@@ -93,16 +110,37 @@ function GetInTouchModal() {
           <div className="form-grid">
             <label>
               Name
-              <input name="name" onChange={handleChange} required type="text" value={form.name} />
+              <input
+                name="name"
+                onChange={handleChange}
+                required
+                type="text"
+                value={form.name}
+              />
             </label>
+
             <label>
               Phone
-              <input name="phone" onChange={handleChange} required type="tel" value={form.phone} />
+              <input
+                name="phone"
+                onChange={handleChange}
+                required
+                type="tel"
+                value={form.phone}
+              />
             </label>
+
             <label className="full-width">
               Email
-              <input name="email" onChange={handleChange} required type="email" value={form.email} />
+              <input
+                name="email"
+                onChange={handleChange}
+                required
+                type="email"
+                value={form.email}
+              />
             </label>
+
             <label className="full-width">
               Other details
               <textarea
@@ -115,9 +153,15 @@ function GetInTouchModal() {
             </label>
           </div>
 
-          {status.message ? <p className={`form-message ${status.type}`}>{status.message}</p> : null}
+          {status.message && (
+            <p className={`form-message ${status.type}`}>{status.message}</p>
+          )}
 
-          <button className="button button-primary" disabled={submitting} type="submit">
+          <button
+            className="button button-primary"
+            disabled={submitting}
+            type="submit"
+          >
             {submitting ? 'Sending...' : 'Submit Request'}
           </button>
         </form>

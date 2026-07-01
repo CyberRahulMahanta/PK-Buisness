@@ -29,6 +29,14 @@ function Register() {
 
     try {
       const user = await register(form)
+
+      // ✅ Correct URL
+      fetch('/api/whatsapp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: form.phone }),
+      })
+
       navigate(user.role === 'admin' ? '/admin' : '/dashboard')
     } catch (err) {
       setError(extractApiError(err))

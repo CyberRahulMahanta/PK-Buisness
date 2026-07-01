@@ -30,6 +30,9 @@ import AdminPreparedDocuments from './pages/admin/PreparedDocuments.jsx'
 import AdminClientWorkspace from './pages/admin/ClientWorkspace.jsx'
 import AdminContactMessages from './pages/admin/ContactMessages.jsx'
 import AdminBlogs from './pages/admin/Blogs.jsx'
+import PrivacyPolicy from './pages/public/PrivacyPolicy.jsx'
+import RefundPolicy from './pages/public/RefundPolicy.jsx'
+import TermsAndConditions from './pages/public/TermsAndConditions.jsx'
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="refund-policy" element={<RefundPolicy />} />
+          <Route path="terms" element={<TermsAndConditions />} />
         </Route>
 
         <Route
